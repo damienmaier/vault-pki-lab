@@ -90,7 +90,25 @@ vault login
 ```
 and we provide the admin token.
 ## PKI
+### Root certificate
+We generate the root certificate :
+```shell
+vault secrets enable pki
+vault secrets tune -max-lease-ttl=87600h pki
+vault write -field=certificate pki/root/generate/internal common_name="heig-vd.ch" issuer_name="root-2022" ttl=87600h > root_2022_ca.crt
+```
+This :
+* Creates a PKI engine at the location `pki`
+* Sets the maximal certificate TTL for this PKI engine to 10 years
+* Creates a root certificate with a TTL of 10 years and the common name `heig-vd.ch`
+* Writes the certificate to the file `root_2022_ca.crt`
 
+We configure the URLs for this PKI engine :
+```shell
+vault write pki/config/urls issuing_certificates="$VAULT_ADDR/v1/pki/ca" crl_distribution_points="$VAULT_ADDR/v1/pki/crl"
+```
+Those URLs will be included in the certificates signed by the root certificate.
+They indicate [where to find information about the root certificate](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.2.1) and [where to find the CRL](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.13).
 
 ## Questions
 #### 4.1. What is the goal of the unseal process? Why are they more than one unsealing key?
