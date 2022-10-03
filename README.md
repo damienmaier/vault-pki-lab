@@ -134,6 +134,20 @@ We import the signed intermediate certificate in the `pki_int` PKI engine :
 ```shell
 vault write pki_int/intermediate/set-signed certificate=@intermediate.cert.pem
 ```
+### Role
+A role corresponds to a PKI engine sub path from where a user can request new certificates signed by the certificate of the PKI engine.
+We can define constraints about the certificates a user can get from a specific role.
+
+We create a role that will be available at `pki_int/issue/intra-heig-vd-ch` for obtaining certificates signed by the intermediate certificate :
+```shell
+vault write pki_int/roles/intra-heig-vd-ch \
+     issuer_ref="$(vault read -field=default pki_int/config/issuers)" \
+     allowed_domains="intra.heig-vd.ch" \
+     allow_bare_domains=true \
+     allow_subdomains=false \
+     max_ttl="720h"
+```
+This role only allows to get certificates for the exact domain `intra.heig-vd.ch`
 ## Questions
 #### 4.1. What is the goal of the unseal process? Why are they more than one unsealing key?
 The data stored by Vault is encrypted. The goal of the unseal process is to provide to Vault the key to decrypt the data.
