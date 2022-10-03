@@ -17,3 +17,12 @@ Then start the server :
 vault server -confg=config.hcl
 ```
 
+## Set up the client
+The `vault` command is also used to act as a client.
+
+The Vault client uses the `VAULT_ADDR` environment variable to know the server address.
+
+In the terminal that will be used to act as client, export the environment variable :
+```shell
+export VAULT_ADDR='http://127.0.0.1:8200'
+```
