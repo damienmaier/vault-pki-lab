@@ -109,7 +109,31 @@ vault write pki/config/urls issuing_certificates="$VAULT_ADDR/v1/pki/ca" crl_dis
 ```
 Those URLs will be included in the certificates signed by the root certificate.
 They indicate [where to find information about the root certificate](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.2.1) and [where to find the CRL](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.13).
-
+### Intermediate certificate
+We create a PKI engine for the intermediate certificate at the location `pki_int` and with a maximal TTL of 5 years :
+```shell
+vault secrets enable -path=pki_int pki
+vault secrets tune -max-lease-ttl=43800h pki_int
+```
+We generate a CSR for the intermediate certificate that is stored in the file `pki_intermediate.csr`:
+```shell
+vault write -format=json pki_int/intermediate/generate/internal \
+     common_name="heig-vd.ch Intermediate Authority" \
+     issuer_name="heig-vd-ch-intermediate" \
+     | jq -r '.data.csr' > pki_intermediate.csr
+```
+We sign the intermediate certificate with the root certificate and save it in the file `intermediate.cert.pem`:
+```shell
+vault write -format=json pki/root/sign-intermediate \
+     issuer_ref="root-2022" \
+     csr=@pki_intermediate.csr \
+     format=pem_bundle ttl="43800h" \
+     | jq -r '.data.certificate' > intermediate.cert.pem
+```
+We import the signed intermediate certificate in the `pki_int` PKI engine :
+```shell
+vault write pki_int/intermediate/set-signed certificate=@intermediate.cert.pem
+```
 ## Questions
 #### 4.1. What is the goal of the unseal process? Why are they more than one unsealing key?
 The data stored by Vault is encrypted. The goal of the unseal process is to provide to Vault the key to decrypt the data.
