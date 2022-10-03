@@ -56,6 +56,19 @@ vault login
 ```
 and then entering the root token.
 
+## Switch to an admin policy
+### Create the admin policy
+
+To write a policy into Vault, we must provide a file that describes it.
+
+The policy we add is described in `admin-policy.hcl`.
+
+This file contains the admin policy provided in the [Vault policies tutorial](https://learn.hashicorp.com/tutorials/vault/policies?in=vault/policies) plus some additional capabilities as described in the [Vault pki tutorial](https://learn.hashicorp.com/tutorials/vault/pki-engine). 
+
+To create the admin policy we run:
+```shell
+vault policy write admin admin-policy.hcl
+```
 ## Questions
 #### 4.1. What is the goal of the unseal process? Why are they more than one unsealing key?
 The data stored by Vault is encrypted. The goal is to allow Vault to obtain the key to decrypt the data.
