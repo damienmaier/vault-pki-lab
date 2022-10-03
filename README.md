@@ -148,6 +148,26 @@ vault write pki_int/roles/intra-heig-vd-ch \
      max_ttl="720h"
 ```
 This role only allows to get certificates for the exact domain `intra.heig-vd.ch`
+### Intra policy
+We want to create a policy that only allows to get certificates from the role `pki_int/issue/intra-heig-vd-ch`.
+To configure it, we need to know exactly which capability is needed to get the certificate.
+
+We cat get this information using the `-output-policy` flag combined with the command we want to execute. We run :
+```shell
+vault write -output-policy pki_int/issue/intra-heig-vd-ch common_name="intra.heig-vd.ch" ttl="24h"
+```
+and the output is
+```
+`path "pki_int/issue/intra-heig-vd-ch" {
+  capabilities = ["create", "update"]
+}`
+```
+We create a policy description file `intra-policy.hcl` with the exact above content.
+
+We create a new policy based on this file :
+```shell
+vault policy write intra intra-policy.hcl
+```
 ## Questions
 #### 4.1. What is the goal of the unseal process? Why are they more than one unsealing key?
 The data stored by Vault is encrypted. The goal of the unseal process is to provide to Vault the key to decrypt the data.
