@@ -168,6 +168,27 @@ We create a new policy based on this file :
 ```shell
 vault policy write intra intra-policy.hcl
 ```
+## Users
+### Create users
+We create a user `toto` with the policy `intra` :
+```shell
+vault write auth/userpass/users/toto password=titi policies=intra
+```
+We create a user `admin` with the policy `admin` :
+```shell
+vault write auth/userpass/users/admin password=admin policies=admin
+```
+It is now possible to log in using
+```shell
+vault login -method=userpass username=<username>
+```
+### Test intra user
+We log in as the user `intra` :
+```shell
+vault login -method=userpass username=intra
+```
+And we try to execute some admin commands. 
+![](permission.png)
 ## Questions
 #### 4.1. What is the goal of the unseal process? Why are they more than one unsealing key?
 The data stored by Vault is encrypted. The goal of the unseal process is to provide to Vault the key to decrypt the data.
@@ -185,3 +206,4 @@ Security officers are the trusted persons that will each receive a key shard.
 
 It is not possible to revoke only one key shard. If a security officer leaves the company, the key shards must be replaced by new ones and distributed to the remaining security officers.
 This operation is called rekeying.
+
