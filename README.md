@@ -198,8 +198,6 @@ The key needed by Vault is split into shards (6 in this lab), of which a minimum
 Each key must be given to a different person. Having a minimum threshold of required keys increases security, as an attacker would have to obtain multiple keys from multiple persons to access the vault.
 Having a total number of keys greater than the threshold protects against loosing access to the Vault if a key becomes inaccessible.
 
-A group of key holders as much as large as the threshold is called a quorum. 
-
 #### 4.2. What is a security officer ? What do you do if one leaves the company?
 
 Security officers are the trusted persons that will each receive a key shard.
