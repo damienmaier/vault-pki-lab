@@ -134,6 +134,10 @@ We import the signed intermediate certificate in the `pki_int` PKI engine :
 ```shell
 vault write pki_int/intermediate/set-signed certificate=@intermediate.cert.pem
 ```
+We configure the URLs for this PKI engine :
+```shell
+vault write pki_int/config/urls issuing_certificates="$VAULT_ADDR/v1/pki_int/ca" crl_distribution_points="$VAULT_ADDR/v1/pki_int/crl"
+```
 ### Role
 A role corresponds to a PKI engine sub path from where a user can request new certificates signed by the certificate of the PKI engine.
 We can define constraints about the certificates a user can get from a specific role.
@@ -148,6 +152,12 @@ vault write pki_int/roles/intra-heig-vd-ch \
      max_ttl="720h"
 ```
 This role only allows to get certificates for the exact domain `intra.heig-vd.ch`
+
+To obtain a certificate, we run :
+
+```shell
+vault write pki_int/issue/intra-heig-vd-ch common_name="intra.heig-vd.ch" ttl="24h"
+```
 ### Intra policy
 We want to create a policy that only allows to get certificates from the role `pki_int/issue/intra-heig-vd-ch`.
 To configure it, we need to know exactly which capability is needed to get the certificate.
