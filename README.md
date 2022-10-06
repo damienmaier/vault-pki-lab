@@ -198,7 +198,7 @@ We log in as the user `intra` :
 vault login -method=userpass username=intra
 ```
 And we try to execute some admin commands. 
-![](permission.png)
+![](images/permission.png)
 ## Questions
 #### 4.1. What is the goal of the unseal process? Why are they more than one unsealing key?
 The data stored by Vault is encrypted. The goal of the unseal process is to provide to Vault the key to decrypt the data.
@@ -253,3 +253,10 @@ To revoke a certificate, we run :
 ```shell
 vault write <pki secret engine path>/revoke serial_number=<serial_number>
 ```
+
+#### 8.1. How is the root key and the encryption key used to secure Vault?
+
+According to the documentation :
+> Most Vault data is encrypted using the encryption key in the keyring; the keyring is encrypted by the root key; and the root key is encrypted by the unseal key.
+> 
+> ![](images/keys.png)
