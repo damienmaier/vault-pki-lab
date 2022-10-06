@@ -205,3 +205,32 @@ Security officers are the trusted persons that will each receive a key shard.
 It is not possible to revoke only one key shard. If a security officer leaves the company, the key shards must be replaced by new ones and distributed to the remaining security officers.
 This operation is called rekeying.
 
+#### 6.1. Why is it recommended to store the root certificate private key outside of Vault (we did not do this here)?
+
+The entire PKI infrastructure security depends on the confidentiality of the root certificate private key. If an attacker obtains the root certificate private key, he can generate and sign certificates that will be trusted by the users of the PKI.
+
+If the root certificate private key is compromised, a new root certificate must be created and distributed to all devices that use the PKI, which is a complicated and costly process.
+
+Even though there are mechanisms that protect the confidentiality of the data stored in Vault, there is always a risk that an attacker can get access to this data.
+Vault is a software exposed to the internet, and there could be a vulnerability that allows an attacker to extract data from it.
+
+The root certificate private key is rarely used, it is necessary only to sign intermediate certificates, which is probably done only once every few years. Therefore, the inconvenience of storing the root certificate private key outside of Vault is low.
+
+#### 6.2. Where would you typically store the root certificate private key?
+
+I would store it in an HSM. The HSM should be able to use the private key to sign intermediate certificates, but should never disclose the private key.
+
+The private key would itself be encrypted with an encryption key, such that the HSM needs to obtain the encryption key to use the private key. The encryption key would be split into several shards.
+
+The HSM and the encryption key shards would be distributed to different persons and stored in separated secured locations, such as safes.
+
+#### 6.3. How would you implement this?
+Generate the root certificate key pair :
+
+During a key ceremony, the root certificate key pair is generated inside an HSM. The public key is disclosed by the HSM. The private key is encrypted inside the HSM with an encryption key. This encryption key is split into shards and each shard is stored on a different smartcard.
+
+Use the private key to sign an intermediate certificate :
+
+A CSR for the intermediate certificate is generated with Vault. During a key ceremony, the HSM and the smartcards are connected together. The HSM uses the key shards stored on the smartcards to decrypt the root certificate private key.
+The HSM then signs the intermediate certificate according to the CSR. The signed intermediate certificate is stored in Vault.
+
