@@ -244,3 +244,12 @@ Use the private key to sign an intermediate certificate :
 A CSR for the intermediate certificate is generated with Vault. During a key ceremony, the HSM and the smartcards are connected together. The HSM uses the key shards stored on the smartcards to decrypt the root certificate private key.
 The HSM then signs the intermediate certificate according to the CSR. The signed intermediate certificate is stored in Vault.
 
+#### 6.4. How are the CRLs managed? How do you revoke a certificate (give the command)?
+The CRL of a given PKI secret engine is available at an endpoint whose URL has the form `<vault server address>/v1/<PKI engine path>/ca`. This endpoint can be used to get the CRL without authentication.
+
+The certificates include an extension field called `CRL Distribution Points` that indicates the URL where the CRL is available.
+
+To revoke a certificate, we run :
+```shell
+vault write <pki secret engine path>/revoke serial_number=<serial_number>
+```
