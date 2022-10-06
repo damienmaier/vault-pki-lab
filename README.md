@@ -14,7 +14,7 @@ mkdir -p ./vault/data
 
 Then start the server :
 ```shell
-vault server -confg=config.hcl
+vault server -config=config.hcl
 ```
 
 ## Set up the client
