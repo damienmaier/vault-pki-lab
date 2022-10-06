@@ -269,3 +269,16 @@ Key rotation should be done periodically. According to the documentation :
 > Keys should be rotated before approximately 2<sup>32</sup> encryptions have been performed
 
 > Vault will automatically rotate the backend encryption key prior to reaching 2<sup>32</sup> encryption operations by default.
+
+#### 8.3. What can you say about the confidentiality of data in the storage backend? How is it done?
+According to the documentation :
+> Vault’s encryption layer, referred to as the barrier, is responsible for encrypting and decrypting Vault data. When the Vault server starts, it writes data to its storage backend. Since the storage backend resides outside the barrier, it’s considered untrusted so Vault will encrypt the data before it sends them to the storage backend. This mechanism ensures that if a malicious attacker attempts to gain access to the storage backend, the data cannot be compromised since it remains encrypted, until Vault decrypts the data. The storage backend provides a durable data persistent layer where data is secured and available across server restarts.
+#### 8.4. What can you say about the security of Vault against an adversary that analyses the memory of the server that runs Vault?
+According to the documentation, protecting against memory analysis of a running Vault is not part of the Vault threat model :
+> If an attacker is able to inspect the memory state of a running Vault instance, then the confidentiality of data may be compromised.
+
+The integrity (and availability) of the data may also be compromised.
+
+The attacker could for example :
+* Read a secret from Vault memory after Vault has decrypted it
+* Retrieve the encryption key from Vault memory and use it to decrypt or modify any data in the storage backend.
