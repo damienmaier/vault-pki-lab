@@ -260,3 +260,12 @@ According to the documentation :
 > Most Vault data is encrypted using the encryption key in the keyring; the keyring is encrypted by the root key; and the root key is encrypted by the unseal key.
 > 
 > ![](images/keys.png)
+
+#### 8.2. What is key rotation and when is it done?
+
+Key rotation is the process of changing Vault's encryption key. After a key rotation, new data will be encrypted with the new key. The old key is still used to read old data.
+
+Key rotation should be done periodically. According to the documentation :
+> Keys should be rotated before approximately 2<sup>32</sup> encryptions have been performed
+
+> Vault will automatically rotate the backend encryption key prior to reaching 2<sup>32</sup> encryption operations by default.
