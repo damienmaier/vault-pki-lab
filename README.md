@@ -245,7 +245,7 @@ A CSR for the intermediate certificate is generated with Vault. During a key cer
 The HSM then signs the intermediate certificate according to the CSR. The signed intermediate certificate is stored in Vault.
 
 #### 6.4. How are the CRLs managed? How do you revoke a certificate (give the command)?
-The CRL of a given PKI secret engine is available at an endpoint whose URL has the form `<vault server address>/v1/<PKI engine path>/ca`. This endpoint can be used to get the CRL without authentication.
+The CRL of a given PKI secret engine is available at an endpoint whose URL has the form `<vault server address>/v1/<PKI engine path>/crl`. This endpoint can be used to get the CRL without authentication.
 
 The certificates include an extension field called `CRL Distribution Points` that indicates the URL where the CRL is available.
 
